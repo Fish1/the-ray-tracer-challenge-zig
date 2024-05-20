@@ -1,4 +1,5 @@
 const Tuple = @import("../tuple/tuple.zig").Tuple;
+const print = @import("std").debug.print;
 
 pub const Color = struct {
     tuple: Tuple,
