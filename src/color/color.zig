@@ -4,8 +4,8 @@ const print = @import("std").debug.print;
 pub const Color = struct {
     tuple: Tuple,
 
-    pub fn New(r: f64, g: f64, b: f64) Color {
-        return Color{ .tuple = Tuple.New(r, g, b, 1) };
+    pub fn init(r: f64, g: f64, b: f64) Color {
+        return Color{ .tuple = Tuple.init(r, g, b, 1) };
     }
 
     pub fn red(self: Color) f64 {
@@ -26,21 +26,21 @@ pub const Color = struct {
 
     pub fn add(self: Color, other: Color) Color {
         const result = self.tuple.add(other.tuple);
-        return Color.New(result.x, result.y, result.z);
+        return Color.init(result.x, result.y, result.z);
     }
 
     pub fn subtract(self: Color, other: Color) Color {
         const result = self.tuple.subtract(other.tuple);
-        return Color.New(result.x, result.y, result.z);
+        return Color.init(result.x, result.y, result.z);
     }
 
     pub fn multiply_scale(self: Color, scaler: f64) Color {
         const result = self.tuple.multiply_scale(scaler);
-        return Color.New(result.x, result.y, result.z);
+        return Color.init(result.x, result.y, result.z);
     }
 
     pub fn multiply(self: Color, other: Color) Color {
-        return Color.New(
+        return Color.init(
             self.red() * other.red(),
             self.green() * other.green(),
             self.blue() * other.blue(),

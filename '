@@ -5,84 +5,6 @@ const PageAllocator = std.heap.page_allocator;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 
-pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
-    return struct {
-        pub const width = _width;
-        pub const height = _height;
-
-        comptime width: usize = _width,
-        comptime height: usize = _height,
-
-        buffer: [_width * _height]f64,
-
-        pub fn init(data: []const f64) @This() {
-            var self: @This() = .{ .buffer = undefined };
-            @memcpy(&self.buffer, data);
-            return self;
-        }
-
-        pub fn init_identity() !@This() {
-            comptime try expect(_width == _height);
-            var self: @This() = .{ .buffer = undefined };
-            for (0.._width * _height) |index| {
-                self.buffer[index] = if (index % (_width + 1) == 0) 1 else 0;
-            }
-            return self;
-        }
-
-        pub fn equals(self: @This(), other: @This()) bool {
-            const eq = std.math.approxEqAbs;
-            for (0.._width * _height) |index| {
-                const a = self.buffer[index];
-                const b = other.buffer[index];
-                if (eq(f64, a, b, 0.00001) == false) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        pub fn get(self: @This(), row: usize, col: usize) !f64 {
-            try expect(col < _width);
-            try expect(row < _height);
-            return self.buffer[row * self.width + col];
-        }
-
-        pub fn multiply(self: @This(), other: anytype) !MultiplyType(@TypeOf(self), @TypeOf(other)) {
-            comptime try expect(self.width == other.height);
-            var buffer = [_]f64{0} ** (other.width * self.height);
-            for (0..self.width) |col| {
-                for (0..other.height) |row| {
-                    const a = try self.get(row, 0);
-                    const b = try self.get(row, 1);
-                    const c = try self.get(row, 2);
-                    const d = try self.get(row, 3);
-
-                    const e = try other.get(0, col);
-                    const f = try other.get(1, col);
-                    const g = try other.get(2, col);
-                    const h = try other.get(3, col);
-
-                    const result =
-                        (a * e) +
-                        (b * f) +
-                        (c * g) +
-                        (d * h);
-                    buffer[row * other.width + col] = result;
-                }
-            }
-            return Matrixx(other.width, self.height).init(&buffer);
-        }
-
-        fn MultiplyType(comptime self: type, comptime other: type) type {
-            if (self.height != other.height) {
-                @compileError("matrices with different heights provided");
-            }
-            return Matrixx(other.width, self.height);
-        }
-    };
-}
-
 pub const Matrix = struct {
     width: usize,
     height: usize,
@@ -91,7 +13,9 @@ pub const Matrix = struct {
 
     pub fn create(width: usize, height: usize, data: []const f64) !Matrix {
         const buffer = try PageAllocator.alloc(f64, width * height);
-        @memcpy(buffer, data);
+        for (data, 0..) |number, index| {
+            buffer[index] = number;
+        }
         return Matrix{
             .width = width,
             .height = height,
@@ -100,14 +24,14 @@ pub const Matrix = struct {
     }
 
     pub fn create_identity(size: usize) !Matrix {
-        const buffer = try PageAllocator.alloc(f64, size * size);
+        var list = ArrayList(f64).init(PageAllocator);
         for (0..size * size) |index| {
-            buffer[index] = if (index % 5 == 0) 1 else 0;
+            try list.append(if (index % 5 == 0) 1 else 0);
         }
         return Matrix{
             .width = size,
             .height = size,
-            .buffer = buffer,
+            .buffer = try list.toOwnedSlice(),
         };
     }
 
@@ -252,8 +176,8 @@ pub const Matrix = struct {
         return Matrix.create(width, height, buffer);
     }
 
-    pub fn minor(self: Matrix, row: usize, col: usize) f64 {
-        const sub = self.submatrix(row, col) catch @panic("failed");
+    pub fn minor(self: Matrix, row: usize, col: usize) !f64 {
+        const sub = try self.submatrix(row, col);
         return sub.determinant();
     }
 };

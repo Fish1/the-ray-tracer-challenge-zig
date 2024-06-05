@@ -6,7 +6,7 @@ pub const Tuple = struct {
     z: f64,
     w: f64,
 
-    pub fn New(x: f64, y: f64, z: f64, w: f64) Tuple {
+    pub fn init(x: f64, y: f64, z: f64, w: f64) Tuple {
         return Tuple{
             .x = x,
             .y = y,
@@ -15,7 +15,7 @@ pub const Tuple = struct {
         };
     }
 
-    pub fn NewPoint(x: f64, y: f64, z: f64) Tuple {
+    pub fn initPoint(x: f64, y: f64, z: f64) Tuple {
         return Tuple{
             .x = x,
             .y = y,
@@ -24,7 +24,7 @@ pub const Tuple = struct {
         };
     }
 
-    pub fn NewVector(x: f64, y: f64, z: f64) Tuple {
+    pub fn initVector(x: f64, y: f64, z: f64) Tuple {
         return Tuple{
             .x = x,
             .y = y,
@@ -94,7 +94,7 @@ pub const Tuple = struct {
     }
 
     pub fn normalized(self: Tuple) Tuple {
-        return Tuple.New(
+        return Tuple.init(
             self.x / self.magnitude(),
             self.y / self.magnitude(),
             self.z / self.magnitude(),
@@ -107,6 +107,6 @@ pub const Tuple = struct {
     }
 
     pub fn cross(self: Tuple, other: Tuple) Tuple {
-        return Tuple.NewVector(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x);
+        return Tuple.initVector(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x);
     }
 };

@@ -6,9 +6,9 @@ pub const Canvas = struct {
     height: usize,
     buffer: []Color,
 
-    pub fn New(comptime width: usize, comptime height: usize, buffer: []Color) Canvas {
+    pub fn init(comptime width: usize, comptime height: usize, buffer: []Color) Canvas {
         for (buffer) |*pixel| {
-            pixel.* = Color.New(0, 0, 0);
+            pixel.* = Color.init(0, 0, 0);
         }
 
         return Canvas{
