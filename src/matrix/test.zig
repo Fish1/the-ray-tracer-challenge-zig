@@ -90,7 +90,7 @@ test "multiply" {
         1,  2, 7, 8,
     };
     const m2 = matrixx(4, 4).init(&buffer2);
-    const result = try m1.multiply(m2);
+    const result = m1.multiply(m2);
     const expectedResult = matrixx(4, 4).init(&[_]f64{
         20, 22, 50,  48,
         44, 54, 114, 108,
@@ -110,11 +110,21 @@ test "multiply tuple" {
 }
 
 test "multiply identity" {
-    const buffer1 = [_]f64{ 0, 1, 2, 4, 1, 2, 4, 8, 2, 4, 8, 16, 4, 8, 16, 32 };
-    const m1 = try matrix.create(4, 4, &buffer1);
-    const m2 = try matrix.create_identity(4);
-    const result = try m1.multiply(m2);
-    const expectedResult = try matrix.create(4, 4, &[_]f64{ 0, 1, 2, 4, 1, 2, 4, 8, 2, 4, 8, 16, 4, 8, 16, 32 });
+    const buffer1 = [_]f64{
+        0, 1, 2,  4,
+        1, 2, 4,  8,
+        2, 4, 8,  16,
+        4, 8, 16, 32,
+    };
+    const m1 = matrixx(4, 4).init(&buffer1);
+    const m2 = matrixx(4, 4).init_identity();
+    const result = m1.multiply(m2);
+    const expectedResult = matrixx(4, 4).init(&[_]f64{
+        0, 1, 2,  4,
+        1, 2, 4,  8,
+        2, 4, 8,  16,
+        4, 8, 16, 32,
+    });
     try expect(result.equals(expectedResult) == true);
 }
 

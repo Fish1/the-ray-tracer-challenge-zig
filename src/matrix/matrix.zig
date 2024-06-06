@@ -21,8 +21,8 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
             return self;
         }
 
-        pub fn init_identity() !@This() {
-            comptime try expect(_width == _height);
+        pub fn init_identity() @This() {
+            comptime expect(_width == _height) catch @compileError("matrix is not square");
             var self: @This() = .{ .buffer = undefined };
             for (0.._width * _height) |index| {
                 self.buffer[index] = if (index % (_width + 1) == 0) 1 else 0;
@@ -48,20 +48,20 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
             return self.buffer[row * self.width + col];
         }
 
-        pub fn multiply(self: @This(), other: anytype) !MultiplyType(@TypeOf(self), @TypeOf(other)) {
-            comptime try expect(self.width == other.height);
+        pub fn multiply(self: @This(), other: anytype) MultiplyType(@TypeOf(self), @TypeOf(other)) {
+            comptime expect(self.width == other.height) catch @compileError("invalid matrix multiplication");
             var buffer = [_]f64{0} ** (other.width * self.height);
             for (0..self.width) |col| {
                 for (0..other.height) |row| {
-                    const a = try self.get(row, 0);
-                    const b = try self.get(row, 1);
-                    const c = try self.get(row, 2);
-                    const d = try self.get(row, 3);
+                    const a = self.buffer[row * self.width + 0];
+                    const b = self.buffer[row * self.width + 1];
+                    const c = self.buffer[row * self.width + 2];
+                    const d = self.buffer[row * self.width + 3];
 
-                    const e = try other.get(0, col);
-                    const f = try other.get(1, col);
-                    const g = try other.get(2, col);
-                    const h = try other.get(3, col);
+                    const e = other.buffer[0 * other.width + col];
+                    const f = other.buffer[1 * other.width + col];
+                    const g = other.buffer[2 * other.width + col];
+                    const h = other.buffer[3 * other.width + col];
 
                     const result =
                         (a * e) +
