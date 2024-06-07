@@ -101,10 +101,14 @@ test "multiply" {
 }
 
 test "multiply tuple" {
-    const buffer1 = [_]f64{ 1, 2, 3, 4, 2, 4, 4, 2, 8, 6, 4, 1, 0, 0, 0, 1 };
-    const m1 = try matrix.create(4, 4, &buffer1);
+    const m1 = matrixx(4, 4).init(&[_]f64{
+        1, 2, 3, 4,
+        2, 4, 4, 2,
+        8, 6, 4, 1,
+        0, 0, 0, 1,
+    });
     const t1 = Tuple.init(1, 2, 3, 1);
-    const result = try m1.multiplyTuple(t1);
+    const result = m1.multiplyTuple(t1);
     const expectedResult = Tuple.init(18, 24, 33, 1);
     try expect(result.equals(expectedResult));
 }
@@ -129,17 +133,26 @@ test "multiply identity" {
 }
 
 test "transpose" {
-    const buffer1 = [_]f64{ 0, 9, 3, 0, 9, 8, 0, 8, 1, 8, 5, 3, 0, 0, 5, 8 };
-    const m1 = try matrix.create(4, 4, &buffer1);
-    const result = try m1.transpose();
-    const expectedResult = try matrix.create(4, 4, &[_]f64{ 0, 9, 1, 0, 9, 8, 8, 0, 3, 0, 5, 5, 0, 8, 3, 8 });
+    const m1 = matrixx(4, 4).init(&[_]f64{
+        0, 9, 3, 0,
+        9, 8, 0, 8,
+        1, 8, 5, 3,
+        0, 0, 5, 8,
+    });
+    const result = m1.transpose();
+    const expectedResult = matrixx(4, 4).init(&[_]f64{
+        0, 9, 1, 0,
+        9, 8, 8, 0,
+        3, 0, 5, 5,
+        0, 8, 3, 8,
+    });
     try expect(result.equals(expectedResult) == true);
 }
 
 test "transpose identity" {
-    const m1 = try matrix.create_identity(4);
-    const result = try m1.transpose();
-    const expectedResult = try matrix.create_identity(4);
+    const m1 = matrixx(4, 4).init_identity();
+    const result = m1.transpose();
+    const expectedResult = matrixx(4, 4).init_identity();
     try expect(result.equals(expectedResult));
 }
 

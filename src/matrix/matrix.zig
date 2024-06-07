@@ -80,6 +80,34 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
             }
             return Matrixx(other.width, self.height);
         }
+
+        pub fn multiplyTuple(self: @This(), other: Tuple) Tuple {
+            comptime expect(self.width == 4) catch @compileError("matrix must have a width of 4");
+            var r = [4]f64{ 0, 0, 0, 0 };
+            for (0..self.height) |row| {
+                const a = self.buffer[row * self.width + 0];
+                const b = self.buffer[row * self.width + 1];
+                const c = self.buffer[row * self.width + 2];
+                const d = self.buffer[row * self.width + 3];
+                r[row] =
+                    (a * other.x) +
+                    (b * other.y) +
+                    (c * other.z) +
+                    (d * other.w);
+            }
+            return Tuple.init(r[0], r[1], r[2], r[3]);
+        }
+
+        pub fn transpose(self: @This()) @This() {
+            var buffer = std.mem.zeroes([self.width * self.height]f64);
+            for (0..self.height) |row| {
+                for (0..self.width) |col| {
+                    const current = self.buffer[row * self.width + col];
+                    buffer[col * self.width + row] = current;
+                }
+            }
+            return Matrixx(self.height, self.height).init(&buffer);
+        }
     };
 }
 
@@ -113,106 +141,6 @@ pub const Matrix = struct {
 
     pub fn destroy(self: Matrix) void {
         PageAllocator.free(self.buffer);
-    }
-
-    pub fn get(self: Matrix, row: usize, col: usize) !f64 {
-        try expect(row < self.height);
-        try expect(col < self.width);
-        return self.buffer[row * self.width + col];
-    }
-
-    pub fn equals(self: Matrix, other: Matrix) bool {
-        if (self.width != other.width or self.height != other.height) {
-            return false;
-        }
-        const eq = std.math.approxEqAbs;
-        for (0..self.width * self.height) |index| {
-            const a = self.buffer[index];
-            const b = other.buffer[index];
-            if (eq(f64, a, b, 0.00001) == false) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    pub fn multiply(self: Matrix, other: Matrix) !Matrix {
-        try expect(self.width == other.height);
-        const width = other.width;
-        const height = other.height;
-        const allocator = std.heap.page_allocator;
-        var list = ArrayList(f64).init(allocator);
-        for (0..other.height) |row| {
-            for (0..self.width) |col| {
-                const a = try self.get(row, 0);
-                const b = try self.get(row, 1);
-                const c = try self.get(row, 2);
-                const d = try self.get(row, 3);
-
-                const e = try other.get(0, col);
-                const f = try other.get(1, col);
-                const g = try other.get(2, col);
-                const h = try other.get(3, col);
-
-                const result =
-                    (a * e) +
-                    (b * f) +
-                    (c * g) +
-                    (d * h);
-                try list.append(result);
-            }
-        }
-        const buffer = try list.toOwnedSlice();
-        return Matrix.create(width, height, buffer);
-    }
-
-    pub fn multiplyTuple(self: Matrix, other: Tuple) !Tuple {
-        try expect(self.width == 4);
-        try expect(self.height == 4);
-
-        var tuple = Tuple.init(0, 0, 0, 0);
-        for (0..4) |row| {
-            const a = try self.get(row, 0);
-            const b = try self.get(row, 1);
-            const c = try self.get(row, 2);
-            const d = try self.get(row, 3);
-            const result =
-                (a * other.x) +
-                (b * other.y) +
-                (c * other.z) +
-                (d * other.w);
-            switch (row) {
-                0 => {
-                    tuple.x = result;
-                },
-                1 => {
-                    tuple.y = result;
-                },
-                2 => {
-                    tuple.z = result;
-                },
-                3 => {
-                    tuple.w = result;
-                },
-                else => {
-                    unreachable;
-                },
-            }
-        }
-        return tuple;
-    }
-
-    pub fn transpose(self: Matrix) !Matrix {
-        const buffer = try PageAllocator.alloc(f64, self.width * self.height);
-        defer PageAllocator.free(buffer);
-
-        for (0..self.width) |col| {
-            for (0..self.height) |row| {
-                buffer[row * self.height + col] = try self.get(col, row);
-            }
-        }
-
-        return Matrix.create(self.width, self.height, buffer);
     }
 
     pub fn determinant(self: Matrix) f64 {
