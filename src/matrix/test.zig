@@ -1,12 +1,12 @@
-const matrix = @import("matrix.zig").Matrix;
-const matrixx = @import("matrix.zig").Matrixx;
 const std = @import("std");
-const expect = std.testing.expect;
+const expect = @import("std").testing.expect;
+
+const Matrix = @import("matrix.zig").Matrix;
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 
 test "create matrix 4x4" {
     const buffer = [_]f64{ 1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5, 9, 10, 11, 12, 13.5, 14.5, 15.5, 16.5 };
-    const m = matrixx(4, 4).init(&buffer);
+    const m = Matrix(4, 4).init(&buffer);
     var x = try m.get(0, 0);
     try expect(x == 1);
     x = try m.get(0, 3);
@@ -25,7 +25,7 @@ test "create matrix 4x4" {
 
 test "create matrix 2x2" {
     const buffer = [_]f64{ -3, 5, 1, -2 };
-    const m = matrixx(2, 2).init(&buffer);
+    const m = Matrix(2, 2).init(&buffer);
     var x = try m.get(0, 0);
     try expect(x == -3);
     x = try m.get(0, 1);
@@ -38,7 +38,7 @@ test "create matrix 2x2" {
 
 test "create matrix 3x3" {
     const buffer = [_]f64{ -3, 5, 0, 1, -2, -7, 0, 1, 1 };
-    const m = matrixx(3, 3).init(&buffer);
+    const m = Matrix(3, 3).init(&buffer);
     var x = try m.get(0, 0);
     try expect(x == -3);
     x = try m.get(0, 1);
@@ -61,17 +61,17 @@ test "create matrix 3x3" {
 
 test "true equality test" {
     const buffer1 = [_]f64{ -3, 5, 0, 1, -2, -7, 0, 1, 1 };
-    const m1 = matrixx(3, 3).init(&buffer1);
+    const m1 = Matrix(3, 3).init(&buffer1);
     const buffer2 = [_]f64{ -3, 5, 0, 1, -2, -7, 0, 1, 1 };
-    const m2 = matrixx(3, 3).init(&buffer2);
+    const m2 = Matrix(3, 3).init(&buffer2);
     try expect(m1.equals(m2) == true);
 }
 
 test "false equality test" {
     const buffer1 = [_]f64{ -3, 5, 0, 1, -2, -7, 0, 1, 1 };
-    const m1 = matrixx(3, 3).init(&buffer1);
+    const m1 = Matrix(3, 3).init(&buffer1);
     const buffer2 = [_]f64{ -3, 5, 0, 1, -2, -7, 0, 1, 2 };
-    const m2 = matrixx(3, 3).init(&buffer2);
+    const m2 = Matrix(3, 3).init(&buffer2);
     try expect(m1.equals(m2) == false);
 }
 
@@ -82,16 +82,16 @@ test "multiply" {
         9, 8, 7, 6,
         5, 4, 3, 2,
     };
-    const m1 = matrixx(4, 4).init(&buffer1);
+    const m1 = Matrix(4, 4).init(&buffer1);
     const buffer2 = [_]f64{
         -2, 1, 2, 3,
         3,  2, 1, -1,
         4,  3, 6, 5,
         1,  2, 7, 8,
     };
-    const m2 = matrixx(4, 4).init(&buffer2);
+    const m2 = Matrix(4, 4).init(&buffer2);
     const result = m1.multiply(m2);
-    const expectedResult = matrixx(4, 4).init(&[_]f64{
+    const expectedResult = Matrix(4, 4).init(&[_]f64{
         20, 22, 50,  48,
         44, 54, 114, 108,
         40, 58, 110, 102,
@@ -101,7 +101,7 @@ test "multiply" {
 }
 
 test "multiply tuple" {
-    const m1 = matrixx(4, 4).init(&[_]f64{
+    const m1 = Matrix(4, 4).init(&[_]f64{
         1, 2, 3, 4,
         2, 4, 4, 2,
         8, 6, 4, 1,
@@ -120,10 +120,10 @@ test "multiply identity" {
         2, 4, 8,  16,
         4, 8, 16, 32,
     };
-    const m1 = matrixx(4, 4).init(&buffer1);
-    const m2 = matrixx(4, 4).init_identity();
+    const m1 = Matrix(4, 4).init(&buffer1);
+    const m2 = Matrix(4, 4).init_identity();
     const result = m1.multiply(m2);
-    const expectedResult = matrixx(4, 4).init(&[_]f64{
+    const expectedResult = Matrix(4, 4).init(&[_]f64{
         0, 1, 2,  4,
         1, 2, 4,  8,
         2, 4, 8,  16,
@@ -133,14 +133,14 @@ test "multiply identity" {
 }
 
 test "transpose" {
-    const m1 = matrixx(4, 4).init(&[_]f64{
+    const m1 = Matrix(4, 4).init(&[_]f64{
         0, 9, 3, 0,
         9, 8, 0, 8,
         1, 8, 5, 3,
         0, 0, 5, 8,
     });
     const result = m1.transpose();
-    const expectedResult = matrixx(4, 4).init(&[_]f64{
+    const expectedResult = Matrix(4, 4).init(&[_]f64{
         0, 9, 1, 0,
         9, 8, 8, 0,
         3, 0, 5, 5,
@@ -150,73 +150,167 @@ test "transpose" {
 }
 
 test "transpose identity" {
-    const m1 = matrixx(4, 4).init_identity();
+    const m1 = Matrix(4, 4).init_identity();
     const result = m1.transpose();
-    const expectedResult = matrixx(4, 4).init_identity();
+    const expectedResult = Matrix(4, 4).init_identity();
     try expect(result.equals(expectedResult));
 }
 
 test "determinant 2x2" {
-    const buffer1 = [_]f64{
+    const m = Matrix(2, 2).init(&[_]f64{
         1,  5,
         -3, 2,
-    };
-    const m1 = try matrix.create(2, 2, &buffer1);
-    const result = m1.determinant();
+    });
+    const result = m.determinant();
     const expectedResult: f64 = 17.0;
     try expect(result == expectedResult);
 }
 
 test "submatrix 3x3 -> 2x2" {
-    const buffer1 = [_]f64{
+    const m1 = Matrix(3, 3).init(&[_]f64{
         1,  5, 0,
         -3, 2, 7,
         0,  6, -3,
-    };
-    const m1 = try matrix.create(3, 3, &buffer1);
+    });
 
-    const result = try m1.submatrix(0, 2);
+    const result = m1.submatrix(0, 2);
 
-    const buffer2 = [_]f64{
+    const expectedResult = Matrix(2, 2).init(&[_]f64{
         -3, 2,
         0,  6,
-    };
-    const expectedResult = try matrix.create(2, 2, &buffer2);
+    });
+
     try expect(result.equals(expectedResult));
 }
 
 test "submatrix 4x4 -> 3x3" {
-    const buffer1 = [_]f64{
+    const m1 = Matrix(4, 4).init(&[_]f64{
         -6, 1, 1,  6,
         -8, 5, 8,  6,
         -1, 0, 8,  2,
         -7, 1, -1, 1,
-    };
-    const m1 = try matrix.create(4, 4, &buffer1);
+    });
 
-    const result = try m1.submatrix(2, 1);
+    const result = m1.submatrix(2, 1);
 
-    const buffer2 = [_]f64{
+    const expectedResult = Matrix(3, 3).init(&[_]f64{
         -6, 1,  6,
         -8, 8,  6,
         -7, -1, 1,
-    };
-    const expectedResult = try matrix.create(3, 3, &buffer2);
+    });
 
     try expect(result.equals(expectedResult));
 }
 
 test "minor 3x3" {
-    const buffer1 = [_]f64{
+    const m1 = Matrix(3, 3).init(&[_]f64{
         3, 5,  0,
         2, -1, -7,
         6, -1, 5,
-    };
-    const m1 = try matrix.create(3, 3, &buffer1);
-    const m2 = try m1.submatrix(1, 0);
+    });
+    const result = m1.minor(1, 0);
+    const expectedResult = 25;
+    try expect(result == expectedResult);
+}
 
-    const minor = m1.minor(1, 0);
-    const det = m2.determinant();
+test "cofactor 3x3" {
+    const m1 = Matrix(3, 3).init(&[_]f64{
+        3, 5,  0,
+        2, -1, -7,
+        6, -1, 5,
+    });
+    var result = m1.cofactor(0, 0);
+    try expect(result == -12);
+    result = m1.cofactor(1, 0);
+    try expect(result == -25);
+}
 
-    try expect(minor == det);
+test "determinant of 3x3" {
+    const m1 = Matrix(3, 3).init(&[_]f64{
+        1,  2, 6,
+        -5, 8, -4,
+        2,  6, 4,
+    });
+    const cofactor1 = m1.cofactor(0, 0);
+    try expect(cofactor1 == 56);
+    const cofactor2 = m1.cofactor(0, 1);
+    try expect(cofactor2 == 12);
+    const cofactor3 = m1.cofactor(0, 2);
+    try expect(cofactor3 == -46);
+
+    const determinant = m1.determinant();
+    try expect(determinant == -196);
+}
+
+test "determinant of 4x4" {
+    const m1 = Matrix(4, 4).init(&[_]f64{
+        -2, -8, 3,  5,
+        -3, 1,  7,  3,
+        1,  2,  -9, 6,
+        -6, 7,  7,  -9,
+    });
+    const cofactor1 = m1.cofactor(0, 0);
+    try expect(cofactor1 == 690);
+    const cofactor2 = m1.cofactor(0, 1);
+    try expect(cofactor2 == 447);
+    const cofactor3 = m1.cofactor(0, 2);
+    try expect(cofactor3 == 210);
+    const cofactor4 = m1.cofactor(0, 3);
+    try expect(cofactor4 == 51);
+
+    const determinant = m1.determinant();
+    try expect(determinant == -4071);
+}
+
+test "is invertable 1" {
+    const m1 = Matrix(4, 4).init(&[_]f64{
+        6, 4,  4, 4,
+        5, 5,  7, 6,
+        4, -9, 3, -7,
+        9, 1,  7, -6,
+    });
+    const result = m1.isInvertable();
+    try expect(result == true);
+}
+
+test "is invertable 2" {
+    const m1 = Matrix(4, 4).init(&[_]f64{
+        -4, 2,  -2, -3,
+        9,  6,  2,  6,
+        0,  -5, 1,  -5,
+        0,  0,  0,  0,
+    });
+    const result = m1.isInvertable();
+    try expect(result == false);
+}
+
+test "inverse" {
+    const m1 = Matrix(4, 4).init(&[_]f64{
+        -5, 2,  6,  -8,
+        1,  -5, 1,  8,
+        7,  7,  -6, -7,
+        1,  -3, 7,  4,
+    });
+    const m2 = m1.inverse();
+
+    const determinant_m1 = m1.determinant();
+    try expect(determinant_m1 == 532);
+    var cofactor_m1 = m1.cofactor(2, 3);
+    try expect(cofactor_m1 == -160);
+    const b32 = try m2.get(3, 2);
+    std.debug.print("{d}", .{b32});
+    try expect(b32 == -160 / 532);
+
+    cofactor_m1 = m1.cofactor(3, 2);
+    try expect(cofactor_m1 == 105);
+    const b23 = try m2.get(2, 3);
+    try expect(b23 == 105 / 532);
+
+    const expectedInverse = Matrix(4, 4).init(&[_]f64{
+        0.21805,  0.45113,  0.24060,  -0.04511,
+        -0.80827, -1.45677, -0.44361, 0.52068,
+        -0.07895, -0.22368, -0.05263, 0.19737,
+        -0.52256, -0.81391, -0.30075, 0.30639,
+    });
+    try expect(m2.equals(expectedInverse));
 }

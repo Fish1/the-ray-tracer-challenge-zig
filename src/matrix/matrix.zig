@@ -5,15 +5,15 @@ const PageAllocator = std.heap.page_allocator;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 
-pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
+pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
     return struct {
-        pub const width = _width;
-        pub const height = _height;
+        pub const rows = _rows;
+        pub const cols = _cols;
 
-        comptime width: usize = _width,
-        comptime height: usize = _height,
+        comptime rows: usize = _rows,
+        comptime cols: usize = _cols,
 
-        buffer: [_width * _height]f64,
+        buffer: [_rows * _cols]f64,
 
         pub fn init(data: []const f64) @This() {
             var self: @This() = .{ .buffer = undefined };
@@ -22,17 +22,17 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
         }
 
         pub fn init_identity() @This() {
-            comptime expect(_width == _height) catch @compileError("matrix is not square");
+            comptime expect(_rows == _cols) catch @compileError("matrix is not square");
             var self: @This() = .{ .buffer = undefined };
-            for (0.._width * _height) |index| {
-                self.buffer[index] = if (index % (_width + 1) == 0) 1 else 0;
+            for (0.._rows * _cols) |index| {
+                self.buffer[index] = if (index % (_cols + 1) == 0) 1 else 0;
             }
             return self;
         }
 
         pub fn equals(self: @This(), other: @This()) bool {
             const eq = std.math.approxEqAbs;
-            for (0.._width * _height) |index| {
+            for (0.._rows * _cols) |index| {
                 const a = self.buffer[index];
                 const b = other.buffer[index];
                 if (eq(f64, a, b, 0.00001) == false) {
@@ -43,52 +43,52 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
         }
 
         pub fn get(self: @This(), row: usize, col: usize) !f64 {
-            try expect(col < _width);
-            try expect(row < _height);
-            return self.buffer[row * self.width + col];
+            try expect(col < _cols);
+            try expect(row < _rows);
+            return self.buffer[row * self.cols + col];
         }
 
         pub fn multiply(self: @This(), other: anytype) MultiplyType(@TypeOf(self), @TypeOf(other)) {
-            comptime expect(self.width == other.height) catch @compileError("invalid matrix multiplication");
-            var buffer = [_]f64{0} ** (other.width * self.height);
-            for (0..self.width) |col| {
-                for (0..other.height) |row| {
-                    const a = self.buffer[row * self.width + 0];
-                    const b = self.buffer[row * self.width + 1];
-                    const c = self.buffer[row * self.width + 2];
-                    const d = self.buffer[row * self.width + 3];
+            comptime expect(self.cols == other.rows) catch @compileError("invalid matrix multiplication");
+            var buffer = [_]f64{0} ** (other.cols * self.rows);
+            for (0..self.cols) |col| {
+                for (0..other.rows) |row| {
+                    const a = self.buffer[row * self.cols + 0];
+                    const b = self.buffer[row * self.cols + 1];
+                    const c = self.buffer[row * self.cols + 2];
+                    const d = self.buffer[row * self.cols + 3];
 
-                    const e = other.buffer[0 * other.width + col];
-                    const f = other.buffer[1 * other.width + col];
-                    const g = other.buffer[2 * other.width + col];
-                    const h = other.buffer[3 * other.width + col];
+                    const e = other.buffer[0 * other.cols + col];
+                    const f = other.buffer[1 * other.cols + col];
+                    const g = other.buffer[2 * other.cols + col];
+                    const h = other.buffer[3 * other.cols + col];
 
                     const result =
                         (a * e) +
                         (b * f) +
                         (c * g) +
                         (d * h);
-                    buffer[row * other.width + col] = result;
+                    buffer[row * other.cols + col] = result;
                 }
             }
-            return Matrixx(other.width, self.height).init(&buffer);
+            return Matrix(other.cols, self.rows).init(&buffer);
         }
 
         fn MultiplyType(comptime self: type, comptime other: type) type {
-            if (self.height != other.height) {
-                @compileError("matrices with different heights provided");
+            if (self.rows != other.rows) {
+                @compileError("matrices with different rows provided");
             }
-            return Matrixx(other.width, self.height);
+            return Matrix(other.cols, self.rows);
         }
 
         pub fn multiplyTuple(self: @This(), other: Tuple) Tuple {
-            comptime expect(self.width == 4) catch @compileError("matrix must have a width of 4");
+            comptime expect(self.cols == 4) catch @compileError("matrix must have 4 columns");
             var r = [4]f64{ 0, 0, 0, 0 };
-            for (0..self.height) |row| {
-                const a = self.buffer[row * self.width + 0];
-                const b = self.buffer[row * self.width + 1];
-                const c = self.buffer[row * self.width + 2];
-                const d = self.buffer[row * self.width + 3];
+            for (0..self.rows) |row| {
+                const a = self.buffer[row * self.cols + 0];
+                const b = self.buffer[row * self.cols + 1];
+                const c = self.buffer[row * self.cols + 2];
+                const d = self.buffer[row * self.cols + 3];
                 r[row] =
                     (a * other.x) +
                     (b * other.y) +
@@ -99,89 +99,78 @@ pub fn Matrixx(comptime _width: usize, comptime _height: usize) type {
         }
 
         pub fn transpose(self: @This()) @This() {
-            var buffer = std.mem.zeroes([self.width * self.height]f64);
-            for (0..self.height) |row| {
-                for (0..self.width) |col| {
-                    const current = self.buffer[row * self.width + col];
-                    buffer[col * self.width + row] = current;
+            var buffer = std.mem.zeroes([self.cols * self.rows]f64);
+            for (0..self.rows) |row| {
+                for (0..self.cols) |col| {
+                    const current = self.buffer[row * self.cols + col];
+                    buffer[col * self.cols + row] = current;
                 }
             }
-            return Matrixx(self.height, self.height).init(&buffer);
+            return Matrix(self.rows, self.rows).init(&buffer);
+        }
+
+        pub fn determinant(self: @This()) f64 {
+            comptime expect(self.cols == self.rows) catch @compileError("matrix must be square");
+            if (self.cols == 2) {
+                return self.determinant_2x2();
+            }
+            var result: f64 = 0;
+            for (0..self.cols) |col| {
+                const c = self.cofactor(0, col);
+                const v = self.buffer[col];
+                result += c * v;
+            }
+            return result;
+        }
+
+        fn determinant_2x2(self: @This()) f64 {
+            return self.buffer[0] * self.buffer[3] - self.buffer[1] * self.buffer[2];
+        }
+
+        pub fn submatrix(self: @This(), skip_row: usize, skip_col: usize) Matrix(_rows - 1, _cols - 1) {
+            const new_rows = (_rows - 1);
+            const new_cols = (_cols - 1);
+            var buffer = std.mem.zeroes([new_cols * new_rows]f64);
+
+            for (0..new_rows) |row| {
+                for (0..new_cols) |col| {
+                    const old_row = if (row >= skip_row) row + 1 else row;
+                    const old_col = if (col >= skip_col) col + 1 else col;
+                    buffer[row * new_cols + col] = self.buffer[old_row * _rows + old_col];
+                }
+            }
+
+            const result = Matrix(new_cols, new_rows).init(&buffer);
+            return result;
+        }
+
+        pub fn minor(self: @This(), row: usize, col: usize) f64 {
+            return self.submatrix(row, col).determinant();
+        }
+
+        pub fn cofactor(self: @This(), row: usize, col: usize) f64 {
+            const m = self.minor(row, col);
+            if (row + col % 2 == 0) {
+                return m;
+            } else {
+                return m * -1;
+            }
+        }
+
+        pub fn isInvertable(self: @This()) bool {
+            return self.determinant() != 0;
+        }
+
+        pub fn inverse(self: @This()) @This() {
+            var result = std.mem.zeroes([self.cols * self.rows]f64);
+            const d = self.determinant();
+            for (0..self.rows) |row| {
+                for (0..self.cols) |col| {
+                    const c = self.cofactor(row, col);
+                    result[row * self.cols + col] = c / d;
+                }
+            }
+            return Matrix(self.rows, self.cols).init(&result);
         }
     };
 }
-
-pub const Matrix = struct {
-    width: usize,
-    height: usize,
-
-    buffer: []f64,
-
-    pub fn create(width: usize, height: usize, data: []const f64) !Matrix {
-        const buffer = try PageAllocator.alloc(f64, width * height);
-        @memcpy(buffer, data);
-        return Matrix{
-            .width = width,
-            .height = height,
-            .buffer = buffer,
-        };
-    }
-
-    pub fn create_identity(size: usize) !Matrix {
-        const buffer = try PageAllocator.alloc(f64, size * size);
-        for (0..size * size) |index| {
-            buffer[index] = if (index % 5 == 0) 1 else 0;
-        }
-        return Matrix{
-            .width = size,
-            .height = size,
-            .buffer = buffer,
-        };
-    }
-
-    pub fn destroy(self: Matrix) void {
-        PageAllocator.free(self.buffer);
-    }
-
-    pub fn determinant(self: Matrix) f64 {
-        if (self.width == 2 and self.height == 2) {
-            return self.determinant_2x2();
-        } else {
-            return 0.0;
-        }
-    }
-
-    fn determinant_2x2(self: Matrix) f64 {
-        return self.buffer[0] * self.buffer[3] - self.buffer[1] * self.buffer[2];
-    }
-
-    pub fn submatrix(self: Matrix, row: usize, col: usize) !Matrix {
-        const width = self.width - 1;
-        const height = self.height - 1;
-        const buffer = try PageAllocator.alloc(f64, width * height);
-        defer PageAllocator.free(buffer);
-
-        // TODO: optimize this please
-        for (0..self.width) |current_col| {
-            if (current_col == col) {
-                continue;
-            }
-            for (0..self.height) |current_row| {
-                if (current_row == row) {
-                    continue;
-                }
-                const new_col = if (current_col > col) current_col - 1 else current_col;
-                const new_row = if (current_row > row) current_row - 1 else current_row;
-                const current_value = self.buffer[current_row * self.height + current_col];
-                buffer[new_row * height + new_col] = current_value;
-            }
-        }
-
-        return Matrix.create(width, height, buffer);
-    }
-
-    pub fn minor(self: Matrix, row: usize, col: usize) f64 {
-        const sub = self.submatrix(row, col) catch @panic("failed");
-        return sub.determinant();
-    }
-};
