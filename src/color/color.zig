@@ -9,15 +9,15 @@ pub const Color = struct {
     }
 
     pub fn red(self: Color) f64 {
-        return self.tuple.x;
+        return self.tuple.getX();
     }
 
     pub fn green(self: Color) f64 {
-        return self.tuple.y;
+        return self.tuple.getY();
     }
 
     pub fn blue(self: Color) f64 {
-        return self.tuple.z;
+        return self.tuple.getZ();
     }
 
     pub fn equals(self: Color, other: Color) bool {
@@ -26,17 +26,17 @@ pub const Color = struct {
 
     pub fn add(self: Color, other: Color) Color {
         const result = self.tuple.add(other.tuple);
-        return Color.init(result.x, result.y, result.z);
+        return Color.init(result.getX(), result.getY(), result.getZ());
     }
 
     pub fn subtract(self: Color, other: Color) Color {
         const result = self.tuple.subtract(other.tuple);
-        return Color.init(result.x, result.y, result.z);
+        return Color.init(result.getX(), result.getY(), result.getZ());
     }
 
     pub fn multiply_scale(self: Color, scaler: f64) Color {
-        const result = self.tuple.multiply_scale(scaler);
-        return Color.init(result.x, result.y, result.z);
+        const result = self.tuple.multiplyScaler(scaler);
+        return Color.init(result.getX(), result.getY(), result.getZ());
     }
 
     pub fn multiply(self: Color, other: Color) Color {

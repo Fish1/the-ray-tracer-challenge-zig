@@ -4,17 +4,17 @@ const std = @import("std");
 const expect = std.testing.expect;
 
 test "create tuples" {
-    const a = Tuple.init(4.3, -4.2, 3.1, 1.0);
-    try expect(a.x == 4.3);
-    try expect(a.y == -4.2);
-    try expect(a.z == 3.1);
-    try expect(a.w == 1.0);
+    const a = Tuple.init(4.3, -4.2, 3.1, 0.0);
+    try expect(a.getX() == 4.3);
+    try expect(a.getY() == -4.2);
+    try expect(a.getZ() == 3.1);
+    try expect(a.getW() == 0.0);
 
-    const b = Tuple.init(4.3, -4.2, 3.1, 0.0);
-    try expect(b.x == 4.3);
-    try expect(b.y == -4.2);
-    try expect(b.z == 3.1);
-    try expect(b.w == 0.0);
+    const b = Tuple.init(4.3, -4.2, 3.1, 1.0);
+    try expect(b.getX() == 4.3);
+    try expect(b.getY() == -4.2);
+    try expect(b.getZ() == 3.1);
+    try expect(b.getW() == 1.0);
 }
 
 test "create point" {
@@ -55,28 +55,28 @@ test "subtract vectors" {
 
 test "negative tuple" {
     const a = Tuple.init(1, -2, 3, -4);
-    const result = a.negative();
+    const result = a.negate();
     const expected_result = Tuple.init(-1, 2, -3, 4);
     try expect(result.equals(expected_result));
 }
 
 test "multiply tuple by scaler" {
     const a = Tuple.init(1, -2, 3, -4);
-    const result = a.multiply_scale(3.5);
+    const result = a.multiplyScaler(3.5);
     const expected_result = Tuple.init(3.5, -7, 10.5, -14);
     try expect(result.equals(expected_result));
 }
 
 test "multiply tuple by fractional scaler" {
     const a = Tuple.init(1, -2, 3, -4);
-    const result = a.multiply_scale(0.5);
+    const result = a.multiplyScaler(0.5);
     const expected_result = Tuple.init(0.5, -1, 1.5, -2);
     try expect(result.equals(expected_result));
 }
 
 test "divide tuple by scaler" {
     const a = Tuple.init(1, -2, 3, -4);
-    const result = a.divide_scale(2);
+    const result = a.divideScaler(2);
     const expected_result = Tuple.init(0.5, -1, 1.5, -2);
     try expect(result.equals(expected_result));
 }
@@ -118,21 +118,21 @@ test "magnitude vector 5" {
 
 test "normalize vector 1" {
     const a = Tuple.initVector(4, 0, 0);
-    const result = a.normalized();
+    const result = a.normalize();
     const expected_result = Tuple.initVector(1, 0, 0);
     try expect(result.equals(expected_result));
 }
 
 test "normalize vector 2" {
     const a = Tuple.initVector(1, 2, 3);
-    const result = a.normalized();
+    const result = a.normalize();
     const expected_result = Tuple.initVector(0.26726, 0.53452, 0.80178);
     try expect(result.equals(expected_result));
 }
 
 test "normalized vector magnitude" {
     const a = Tuple.initVector(1, 2, 3);
-    const result = a.normalized().magnitude();
+    const result = a.normalize().magnitude();
     const expected_result = 1;
     try expect(result == expected_result);
 }

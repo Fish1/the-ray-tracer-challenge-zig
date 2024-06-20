@@ -48,6 +48,42 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
             return self.buffer[row * self.cols + col];
         }
 
+        pub fn negate(self: @This()) @This() {
+            var buffer = std.mem.zeroes([self.cols * self.rows]f64);
+            for (0..self.rows * self.cols) |index| {
+                buffer[index] = self.buffer[index] * -1;
+            }
+            return Matrix(self.rows, self.cols).init(&buffer);
+        }
+
+        pub fn add(self: @This(), other: @This()) @This() {
+            var buffer = std.mem.zeroes([self.cols * self.rows]f64);
+            for (0..self.rows * self.cols) |index| {
+                buffer[index] = self.buffer[index] + other.buffer[index];
+            }
+            return Matrix(self.rows, self.cols).init(&buffer);
+        }
+
+        pub fn subtract(self: @This(), other: @This()) @This() {
+            var buffer = std.mem.zeroes([self.cols * self.rows]f64);
+            for (0..self.rows * self.cols) |index| {
+                buffer[index] = self.buffer[index] - other.buffer[index];
+            }
+            return Matrix(self.rows, self.cols).init(&buffer);
+        }
+
+        pub fn multiplyScaler(self: @This(), scaler: f64) @This() {
+            var buffer = std.mem.zeroes([self.cols * self.rows]f64);
+            for (0..self.rows * self.cols) |index| {
+                buffer[index] = self.buffer[index] * scaler;
+            }
+            return Matrix(self.rows, self.cols).init(&buffer);
+        }
+
+        pub fn divideScaler(self: @This(), scaler: f64) @This() {
+            return self.multiplyScaler(1.0 / scaler);
+        }
+
         pub fn multiply(self: @This(), other: anytype) MultiplyType(@TypeOf(self), @TypeOf(other)) {
             comptime expect(self.cols == other.rows) catch @compileError("invalid matrix multiplication");
             var buffer = [_]f64{0} ** (other.cols * self.rows);
@@ -90,10 +126,10 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
                 const c = self.buffer[row * self.cols + 2];
                 const d = self.buffer[row * self.cols + 3];
                 r[row] =
-                    (a * other.x) +
-                    (b * other.y) +
-                    (c * other.z) +
-                    (d * other.w);
+                    (a * other.getX()) +
+                    (b * other.getY()) +
+                    (c * other.getZ()) +
+                    (d * other.getW());
             }
             return Tuple.init(r[0], r[1], r[2], r[3]);
         }
@@ -150,7 +186,7 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
 
         pub fn cofactor(self: @This(), row: usize, col: usize) f64 {
             const m = self.minor(row, col);
-            if (row + col % 2 == 0) {
+            if ((row + col) % 2 == 0) {
                 return m;
             } else {
                 return m * -1;
@@ -167,7 +203,7 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
             for (0..self.rows) |row| {
                 for (0..self.cols) |col| {
                     const c = self.cofactor(row, col);
-                    result[row * self.cols + col] = c / d;
+                    result[col * self.cols + row] = c / d;
                 }
             }
             return Matrix(self.rows, self.cols).init(&result);

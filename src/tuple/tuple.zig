@@ -1,112 +1,92 @@
 const std = @import("std");
 
+const Matrix = @import("../matrix/matrix.zig").Matrix;
+
 pub const Tuple = struct {
-    x: f64,
-    y: f64,
-    z: f64,
-    w: f64,
+    m: Matrix(4, 1),
 
     pub fn init(x: f64, y: f64, z: f64, w: f64) Tuple {
-        return Tuple{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = w,
-        };
+        return Tuple{ .m = Matrix(4, 1).init(&[_]f64{
+            x, y, z, w,
+        }) };
     }
 
     pub fn initPoint(x: f64, y: f64, z: f64) Tuple {
-        return Tuple{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = 1,
-        };
+        return Tuple.init(x, y, z, 1);
     }
 
     pub fn initVector(x: f64, y: f64, z: f64) Tuple {
-        return Tuple{
-            .x = x,
-            .y = y,
-            .z = z,
-            .w = 0,
-        };
+        return Tuple.init(x, y, z, 0);
+    }
+
+    pub fn getX(self: Tuple) f64 {
+        return self.m.buffer[0];
+    }
+
+    pub fn getY(self: Tuple) f64 {
+        return self.m.buffer[1];
+    }
+
+    pub fn getZ(self: Tuple) f64 {
+        return self.m.buffer[2];
+    }
+
+    pub fn getW(self: Tuple) f64 {
+        return self.m.buffer[3];
     }
 
     pub fn equals(self: Tuple, other: Tuple) bool {
-        const eq = std.math.approxEqAbs;
-        return eq(f64, self.x, other.x, 0.00001) and
-            eq(f64, self.y, other.y, 0.00001) and
-            eq(f64, self.z, other.z, 0.00001) and
-            eq(f64, self.w, other.w, 0.00001);
+        return self.m.equals(other.m);
     }
 
     pub fn add(self: Tuple, other: Tuple) Tuple {
-        return Tuple{
-            .x = self.x + other.x,
-            .y = self.y + other.y,
-            .z = self.z + other.z,
-            .w = self.w + other.w,
-        };
+        return Tuple{ .m = self.m.add(other.m) };
     }
 
     pub fn subtract(self: Tuple, other: Tuple) Tuple {
-        return Tuple{
-            .x = self.x - other.x,
-            .y = self.y - other.y,
-            .z = self.z - other.z,
-            .w = self.w - other.w,
-        };
+        return Tuple{ .m = self.m.subtract(other.m) };
     }
 
-    pub fn negative(self: Tuple) Tuple {
-        return Tuple{
-            .x = -self.x,
-            .y = -self.y,
-            .z = -self.z,
-            .w = -self.w,
-        };
+    pub fn negate(self: Tuple) Tuple {
+        return Tuple{ .m = self.m.negate() };
     }
 
-    pub fn multiply_scale(self: Tuple, scaler: f64) Tuple {
-        return Tuple{
-            .x = self.x * scaler,
-            .y = self.y * scaler,
-            .z = self.z * scaler,
-            .w = self.w * scaler,
-        };
+    pub fn multiplyScaler(self: Tuple, scaler: f64) Tuple {
+        return Tuple{ .m = self.m.multiplyScaler(scaler) };
     }
 
-    pub fn divide_scale(self: Tuple, scaler: f64) Tuple {
-        return Tuple{
-            .x = self.x / scaler,
-            .y = self.y / scaler,
-            .z = self.z / scaler,
-            .w = self.w / scaler,
-        };
+    pub fn divideScaler(self: Tuple, scaler: f64) Tuple {
+        return Tuple{ .m = self.m.divideScaler(scaler) };
     }
 
     pub fn magnitude(self: Tuple) f64 {
-        return std.math.sqrt((self.x * self.x) +
-            (self.y * self.y) +
-            (self.z * self.z) +
-            (self.w * self.w));
+        return std.math.sqrt((self.getX() * self.getX()) +
+            (self.getY() * self.getY()) +
+            (self.getZ() * self.getZ()) +
+            (self.getW() * self.getW()));
     }
 
-    pub fn normalized(self: Tuple) Tuple {
+    pub fn normalize(self: Tuple) Tuple {
         return Tuple.init(
-            self.x / self.magnitude(),
-            self.y / self.magnitude(),
-            self.z / self.magnitude(),
-            self.w / self.magnitude(),
+            self.getX() / self.magnitude(),
+            self.getY() / self.magnitude(),
+            self.getZ() / self.magnitude(),
+            self.getW() / self.magnitude(),
         );
     }
 
     pub fn dot(self: Tuple, other: Tuple) f64 {
-        return self.x * other.x + self.y * other.y + self.z * other.z + self.w * other.w;
+        return self.getX() * other.getX() +
+            self.getY() * other.getY() +
+            self.getZ() * other.getZ() +
+            self.getW() * other.getW();
     }
 
     pub fn cross(self: Tuple, other: Tuple) Tuple {
-        return Tuple.initVector(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x);
+        return Tuple.initVector(
+            self.getY() * other.getZ() - self.getZ() * other.getY(),
+            self.getZ() * other.getX() - self.getX() * other.getZ(),
+            self.getX() * other.getY() - self.getY() * other.getX(),
+        );
     }
 };
