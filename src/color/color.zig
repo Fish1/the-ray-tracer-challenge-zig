@@ -34,7 +34,7 @@ pub const Color = struct {
         return Color.init(result.getX(), result.getY(), result.getZ());
     }
 
-    pub fn multiply_scale(self: Color, scaler: f64) Color {
+    pub fn multiplyScaler(self: Color, scaler: f64) Color {
         const result = self.tuple.multiplyScaler(scaler);
         return Color.init(result.getX(), result.getY(), result.getZ());
     }

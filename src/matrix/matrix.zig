@@ -21,7 +21,7 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
             return self;
         }
 
-        pub fn init_identity() @This() {
+        pub fn Identity() @This() {
             comptime expect(_rows == _cols) catch @compileError("matrix is not square");
             var self: @This() = .{ .buffer = undefined };
             for (0.._rows * _cols) |index| {

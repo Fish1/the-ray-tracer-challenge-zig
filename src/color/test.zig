@@ -28,7 +28,7 @@ test "subtract colors" {
 
 test "scale color" {
     const a = Color.init(0.2, 0.3, 0.4);
-    const result = a.multiply_scale(2);
+    const result = a.multiplyScaler(2);
     const expected_result = Color.init(0.4, 0.6, 0.8);
     try expect(result.equals(expected_result));
 }

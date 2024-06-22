@@ -2,6 +2,7 @@ const std = @import("std");
 const expect = @import("std").testing.expect;
 
 const Matrix = @import("matrix.zig").Matrix;
+const Transform = @import("matrix.zig").Transform;
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 
 test "create matrix 4x4" {
@@ -121,7 +122,7 @@ test "multiply identity" {
         4, 8, 16, 32,
     };
     const m1 = Matrix(4, 4).init(&buffer1);
-    const m2 = Matrix(4, 4).init_identity();
+    const m2 = Matrix(4, 4).Identity();
     const result = m1.multiply(m2);
     const expectedResult = Matrix(4, 4).init(&[_]f64{
         0, 1, 2,  4,
@@ -150,9 +151,9 @@ test "transpose" {
 }
 
 test "transpose identity" {
-    const m1 = Matrix(4, 4).init_identity();
+    const m1 = Matrix(4, 4).Identity();
     const result = m1.transpose();
-    const expectedResult = Matrix(4, 4).init_identity();
+    const expectedResult = Matrix(4, 4).Identity();
     try expect(result.equals(expectedResult));
 }
 

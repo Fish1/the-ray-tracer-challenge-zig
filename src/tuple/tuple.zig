@@ -11,11 +11,11 @@ pub const Tuple = struct {
         }) };
     }
 
-    pub fn initPoint(x: f64, y: f64, z: f64) Tuple {
+    pub fn Point(x: f64, y: f64, z: f64) Tuple {
         return Tuple.init(x, y, z, 1);
     }
 
-    pub fn initVector(x: f64, y: f64, z: f64) Tuple {
+    pub fn Vector(x: f64, y: f64, z: f64) Tuple {
         return Tuple.init(x, y, z, 0);
     }
 
@@ -83,7 +83,7 @@ pub const Tuple = struct {
     }
 
     pub fn cross(self: Tuple, other: Tuple) Tuple {
-        return Tuple.initVector(
+        return Tuple.Vector(
             self.getY() * other.getZ() - self.getZ() * other.getY(),
             self.getZ() * other.getX() - self.getX() * other.getZ(),
             self.getX() * other.getY() - self.getY() * other.getX(),

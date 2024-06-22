@@ -18,13 +18,13 @@ test "create tuples" {
 }
 
 test "create point" {
-    const a = Tuple.initPoint(4, -4, 3);
+    const a = Tuple.Point(4, -4, 3);
     const b = Tuple.init(4, -4, 3, 1);
     try expect(a.equals(b));
 }
 
 test "create vector" {
-    const a = Tuple.initVector(4, -4, 3);
+    const a = Tuple.Vector(4, -4, 3);
     const b = Tuple.init(4, -4, 3, 0);
     try expect(a.equals(b));
 }
@@ -38,18 +38,18 @@ test "add tuples" {
 }
 
 test "subtract points" {
-    const a = Tuple.initPoint(3, 2, 1);
-    const b = Tuple.initPoint(5, 6, 7);
+    const a = Tuple.Point(3, 2, 1);
+    const b = Tuple.Point(5, 6, 7);
     const result = a.subtract(b);
-    const expected_result = Tuple.initVector(-2, -4, -6);
+    const expected_result = Tuple.Vector(-2, -4, -6);
     try expect(result.equals(expected_result));
 }
 
 test "subtract vectors" {
-    const a = Tuple.initVector(3, 2, 1);
-    const b = Tuple.initVector(5, 6, 7);
+    const a = Tuple.Vector(3, 2, 1);
+    const b = Tuple.Vector(5, 6, 7);
     const result = a.subtract(b);
-    const expected_result = Tuple.initVector(-2, -4, -6);
+    const expected_result = Tuple.Vector(-2, -4, -6);
     try expect(result.equals(expected_result));
 }
 
@@ -82,77 +82,77 @@ test "divide tuple by scaler" {
 }
 
 test "magnitude vector 1" {
-    const a = Tuple.initVector(1, 0, 0);
+    const a = Tuple.Vector(1, 0, 0);
     const result = a.magnitude();
     const expected_result = 1;
     try expect(result == expected_result);
 }
 
 test "magnitude vector 2" {
-    const a = Tuple.initVector(0, 1, 0);
+    const a = Tuple.Vector(0, 1, 0);
     const result = a.magnitude();
     const expected_result = 1;
     try expect(result == expected_result);
 }
 
 test "magnitude vector 3" {
-    const a = Tuple.initVector(0, 0, 1);
+    const a = Tuple.Vector(0, 0, 1);
     const result = a.magnitude();
     const expected_result = 1;
     try expect(result == expected_result);
 }
 
 test "magnitude vector 4" {
-    const a = Tuple.initVector(1, 2, 3);
+    const a = Tuple.Vector(1, 2, 3);
     const result = a.magnitude();
     const expected_result = std.math.sqrt(14.0);
     try expect(result == expected_result);
 }
 
 test "magnitude vector 5" {
-    const a = Tuple.initVector(-1, -2, -3);
+    const a = Tuple.Vector(-1, -2, -3);
     const result = a.magnitude();
     const expected_result = std.math.sqrt(14.0);
     try expect(result == expected_result);
 }
 
 test "normalize vector 1" {
-    const a = Tuple.initVector(4, 0, 0);
+    const a = Tuple.Vector(4, 0, 0);
     const result = a.normalize();
-    const expected_result = Tuple.initVector(1, 0, 0);
+    const expected_result = Tuple.Vector(1, 0, 0);
     try expect(result.equals(expected_result));
 }
 
 test "normalize vector 2" {
-    const a = Tuple.initVector(1, 2, 3);
+    const a = Tuple.Vector(1, 2, 3);
     const result = a.normalize();
-    const expected_result = Tuple.initVector(0.26726, 0.53452, 0.80178);
+    const expected_result = Tuple.Vector(0.26726, 0.53452, 0.80178);
     try expect(result.equals(expected_result));
 }
 
 test "normalized vector magnitude" {
-    const a = Tuple.initVector(1, 2, 3);
+    const a = Tuple.Vector(1, 2, 3);
     const result = a.normalize().magnitude();
     const expected_result = 1;
     try expect(result == expected_result);
 }
 
 test "dot product" {
-    const a = Tuple.initVector(1, 2, 3);
-    const b = Tuple.initVector(2, 3, 4);
+    const a = Tuple.Vector(1, 2, 3);
+    const b = Tuple.Vector(2, 3, 4);
     const result = a.dot(b);
     const expected_result = 20;
     try expect(result == expected_result);
 }
 
 test "cross product" {
-    const a = Tuple.initVector(1, 2, 3);
-    const b = Tuple.initVector(2, 3, 4);
+    const a = Tuple.Vector(1, 2, 3);
+    const b = Tuple.Vector(2, 3, 4);
     const result_axb = a.cross(b);
-    const expected_result_axb = Tuple.initVector(-1, 2, -1);
+    const expected_result_axb = Tuple.Vector(-1, 2, -1);
     try expect(result_axb.equals(expected_result_axb));
 
     const result_bxa = a.cross(b);
-    const expected_result_bxa = Tuple.initVector(-1, 2, -1);
+    const expected_result_bxa = Tuple.Vector(-1, 2, -1);
     try expect(result_bxa.equals(expected_result_bxa));
 }

@@ -4,5 +4,6 @@ comptime {
         _ = @import("./tuple/test.zig");
         _ = @import("./canvas/test.zig");
         _ = @import("./matrix/test.zig");
+        _ = @import("./transform/test.zig");
     }
 }
