@@ -55,6 +55,10 @@ pub const Tuple = struct {
         return Tuple{ .m = self.m.multiplyScaler(scaler) };
     }
 
+    pub fn multiplyMatrix(self: Tuple, matrix: Matrix(4, 4)) Tuple {
+        return matrix.multiplyTuple(self);
+    }
+
     pub fn divideScaler(self: Tuple, scaler: f64) Tuple {
         return Tuple{ .m = self.m.divideScaler(scaler) };
     }

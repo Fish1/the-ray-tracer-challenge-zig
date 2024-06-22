@@ -1,8 +1,11 @@
 const math = @import("std").math;
 const expect = @import("std").testing.expect;
+const log = @import("std").log;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 const Transform = @import("transform.zig").Transform;
+const Color = @import("../color/color.zig").Color;
+const Canvas = @import("../canvas/canvas.zig").Canvas;
 
 test "Translate" {
     const translate = Transform.Translate(5, -3, 2);
@@ -104,4 +107,101 @@ test "rotate z" {
 
     try expect(p1.equals(p1r));
     try expect(p2.equals(p2r));
+}
+
+test "sheer x in proportion to y" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(1, 0, 0, 0, 0, 0);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(5, 3, 4);
+    try expect(result.equals(expectedResult));
+}
+
+test "sheer x in proportion to z" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(0, 1, 0, 0, 0, 0);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(6, 3, 4);
+    try expect(result.equals(expectedResult));
+}
+
+test "sheer y in proportion to x" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(0, 0, 1, 0, 0, 0);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(2, 5, 4);
+    try expect(result.equals(expectedResult));
+}
+
+test "sheer y in proportion to z" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(0, 0, 0, 1, 0, 0);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(2, 7, 4);
+    try expect(result.equals(expectedResult));
+}
+
+test "sheer z in proportion to x" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(0, 0, 0, 0, 1, 0);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(2, 3, 6);
+    try expect(result.equals(expectedResult));
+}
+
+test "sheer z in proportion to y" {
+    const point = Tuple.Point(2, 3, 4);
+    const transform = Transform.Sheer(0, 0, 0, 0, 0, 1);
+    const result = transform.multiplyTuple(point);
+    const expectedResult = Tuple.Point(2, 3, 7);
+    try expect(result.equals(expectedResult));
+}
+
+test "tranformations in sequence" {
+    const point = Tuple.Point(1, 0, 1);
+    const rotate = Transform.RotateX(math.pi / 2.0);
+    const scale = Transform.Scale(5, 5, 5);
+    const translate = Transform.Translate(10, 5, 7);
+
+    const p2 = rotate.multiplyTuple(point);
+    try expect(p2.equals(Tuple.Point(1, -1, 0)));
+
+    const p3 = scale.multiplyTuple(p2);
+    try expect(p3.equals(Tuple.Point(5, -5, 0)));
+
+    const p4 = translate.multiplyTuple(p3);
+    try expect(p4.equals(Tuple.Point(15, 0, 7)));
+}
+
+test "transformations in seqence (chained)" {
+    const point = Tuple.Point(1, 0, 1);
+    const rotate = Transform.RotateX(math.pi / 2.0);
+    const scale = Transform.Scale(5, 5, 5);
+    const translate = Transform.Translate(10, 5, 7);
+
+    const result = translate.multiplyTuple(scale.multiplyTuple(rotate.multiplyTuple(point)));
+    try expect(result.equals(Tuple.Point(15, 0, 7)));
+
+    const result2 = point.multiplyMatrix(rotate).multiplyMatrix(scale).multiplyMatrix(translate);
+    try expect(result2.equals(Tuple.Point(15, 0, 7)));
+}
+
+test "create clock" {
+    var buffer: [300 * 300]Color = undefined;
+    const canvas = Canvas.init(300, 300, &buffer);
+
+    const position = Transform.Translate(150, 150, 0);
+
+    var point = Tuple.Point(0, 0, 0);
+    point = point.multiplyMatrix(Transform.Translate(100, 0, 0));
+
+    const rotate = Transform.RotateZ(math.pi / 32.0);
+    for (0..64) |_| {
+        point = point.multiplyMatrix(rotate);
+        const p2 = point.multiplyMatrix(position);
+        const x = @as(usize, @intFromFloat(p2.getX()));
+        const y = @as(usize, @intFromFloat(p2.getY()));
+        canvas.safeSet(x, y, Color.init(1.5, 0, 0));
+    }
+    try canvas.render("./output/clock.ppm");
 }

@@ -47,4 +47,13 @@ pub const Transform = struct {
             0,                 0,                  0, 1,
         });
     }
+
+    pub fn Sheer(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) Matrix(4, 4) {
+        return Matrix(4, 4).init(&[_]f64{
+            1,  xy, xz, 0,
+            yx, 1,  yz, 0,
+            zx, zy, 1,  0,
+            0,  0,  0,  1,
+        });
+    }
 };

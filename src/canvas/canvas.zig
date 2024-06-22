@@ -26,6 +26,12 @@ pub const Canvas = struct {
         self.buffer[y * self.width + x] = color;
     }
 
+    pub fn safeSet(self: Canvas, x: usize, y: usize, color: Color) void {
+        if (x >= 0 and x < self.width and y >= 0 and y < self.height) {
+            self.buffer[y * self.width + x] = color;
+        }
+    }
+
     pub fn render(self: Canvas, destination: []const u8) !void {
         const file = try std.fs.cwd().createFile(
             destination,
