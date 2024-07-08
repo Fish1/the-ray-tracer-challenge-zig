@@ -30,5 +30,21 @@ pub fn IntersectionList() type {
         pub fn length(self: @This()) usize {
             return self.array_list.items.len;
         }
+
+        pub fn hit(self: @This()) ?*const Intersection() {
+            if (self.array_list.items.len == 0) {
+                return null;
+            }
+            var result: *const Intersection() = &self.array_list.items[0];
+            for (self.array_list.items) |*item| {
+                if (item.time < result.time or result.time < 0) {
+                    result = item;
+                }
+            }
+            if (result.time <= 0) {
+                return null;
+            }
+            return result;
+        }
     };
 }
