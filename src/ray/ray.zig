@@ -3,6 +3,7 @@ const log = @import("std").log;
 const mem = @import("std").mem;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
+const Matrix = @import("../matrix/matrix.zig").Matrix;
 const Object = @import("../object/object.zig").Object;
 
 const IntersectionList = @import("../intersection/intersection_list.zig").IntersectionList;
@@ -29,9 +30,11 @@ pub fn Ray() type {
         }
 
         pub fn intersect(self: @This(), object: *const Object()) IntersectionList() {
-            const shapeToRay = Tuple.subtract(self.origin, Tuple.Point(0, 0, 0));
-            const a = Tuple.dot(self.direction, self.direction);
-            const b = Tuple.dot(self.direction, shapeToRay) * 2;
+            const tempRay = self.transform(object.transform.inverse());
+
+            const shapeToRay = Tuple.subtract(tempRay.origin, Tuple.Point(0, 0, 0));
+            const a = Tuple.dot(tempRay.direction, tempRay.direction);
+            const b = Tuple.dot(tempRay.direction, shapeToRay) * 2;
             const c = Tuple.dot(shapeToRay, shapeToRay) - 1.0;
 
             const discriminant = (b * b) - 4 * a * c;
@@ -51,6 +54,13 @@ pub fn Ray() type {
             intersectionList.append(intersection_a);
             intersectionList.append(intersection_b);
             return intersectionList;
+        }
+
+        pub fn transform(self: @This(), transformation: Matrix(4, 4)) @This() {
+            return .{
+                .origin = self.origin.multiplyMatrix(transformation),
+                .direction = self.direction.multiplyMatrix(transformation),
+            };
         }
     };
 }

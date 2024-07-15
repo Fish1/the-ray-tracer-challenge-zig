@@ -56,4 +56,8 @@ pub const Transform = struct {
             0,  0,  0,  1,
         });
     }
+
+    pub fn Identity() Matrix(4, 4) {
+        return Matrix(4, 4).Identity();
+    }
 };

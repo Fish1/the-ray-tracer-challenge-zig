@@ -7,5 +7,7 @@ comptime {
         _ = @import("./transform/test.zig");
         _ = @import("./ray/test.zig");
         _ = @import("./intersection/test.zig");
+        _ = @import("./object/test.zig");
+        _ = @import("./_render_tests/draw_sphere.zig");
     }
 }
