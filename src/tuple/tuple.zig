@@ -35,6 +35,22 @@ pub const Tuple = struct {
         return self.m.buffer[3];
     }
 
+    pub fn setX(self: *Tuple, value: f64) void {
+        self.m.buffer[0] = value;
+    }
+
+    pub fn setY(self: *Tuple, value: f64) void {
+        self.m.buffer[1] = value;
+    }
+
+    pub fn setZ(self: *Tuple, value: f64) void {
+        self.m.buffer[2] = value;
+    }
+
+    pub fn setW(self: *Tuple, value: f64) void {
+        self.m.buffer[3] = value;
+    }
+
     pub fn equals(self: Tuple, other: Tuple) bool {
         return self.m.equals(other.m);
     }
@@ -91,6 +107,15 @@ pub const Tuple = struct {
             self.getY() * other.getZ() - self.getZ() * other.getY(),
             self.getZ() * other.getX() - self.getX() * other.getZ(),
             self.getX() * other.getY() - self.getY() * other.getX(),
+        );
+    }
+
+    pub fn reflect(self: Tuple, other: Tuple) Tuple {
+        return Tuple.subtract(
+            self,
+            other
+                .multiplyScaler(2.0)
+                .multiplyScaler(Tuple.dot(self, other)),
         );
     }
 };

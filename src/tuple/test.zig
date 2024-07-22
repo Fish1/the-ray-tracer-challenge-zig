@@ -2,6 +2,7 @@ const Tuple = @import("tuple.zig").Tuple;
 
 const std = @import("std");
 const expect = std.testing.expect;
+const sqrt = std.math.sqrt;
 
 test "create tuples" {
     const a = Tuple.init(4.3, -4.2, 3.1, 0.0);
@@ -155,4 +156,20 @@ test "cross product" {
     const result_bxa = a.cross(b);
     const expected_result_bxa = Tuple.Vector(-1, 2, -1);
     try expect(result_bxa.equals(expected_result_bxa));
+}
+
+test "reflect vector" {
+    const vector = Tuple.Vector(1, -1, 0);
+    const normal = Tuple.Vector(0, 1, 0);
+    const reflection = vector.reflect(normal);
+    const expected_result = Tuple.Vector(1, 1, 0);
+    try expect(reflection.equals(expected_result));
+}
+
+test "reflect vector of slant" {
+    const vector = Tuple.Vector(0, -1, 0);
+    const normal = Tuple.Vector(sqrt(2.0) / 2.0, sqrt(2.0) / 2.0, 0.0);
+    const reflection = vector.reflect(normal);
+    const expected_result = Tuple.Vector(1, 0, 0);
+    try expect(reflection.equals(expected_result));
 }
