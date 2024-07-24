@@ -10,5 +10,6 @@ comptime {
         _ = @import("./object/test.zig");
         _ = @import("./light/test.zig");
         _ = @import("./material/test.zig");
+        _ = @import("./world/test.zig");
     }
 }

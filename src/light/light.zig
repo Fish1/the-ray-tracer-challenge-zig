@@ -21,6 +21,13 @@ pub fn Light() type {
             };
         }
 
+        pub fn equals(self: @This(), other: *const @This()) bool {
+            const transformsEqual = self.transform.equals(other.transform);
+            const positionsEqual = self.position.equals(other.position);
+            const intensityEqual = self.intensity.equals(other.intensity);
+            return transformsEqual and positionsEqual and intensityEqual;
+        }
+
         pub fn lighting(self: @This(), material: Material(), surfacePoint: Tuple, toEye: Tuple, surfaceNormal: Tuple) Color {
             const effectiveColor = material.color.multiply(self.intensity);
             const lightVector = self.position.subtract(surfacePoint).normalize();

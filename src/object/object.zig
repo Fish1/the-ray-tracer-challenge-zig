@@ -23,5 +23,11 @@ pub fn Object() type {
             worldSpaceNormal.setW(0);
             return worldSpaceNormal.normalize();
         }
+
+        pub fn equals(self: @This(), other: *const @This()) bool {
+            const transformsEqual = self.transform.equals(other.transform);
+            const materialsEqual = self.material.equals(other.material);
+            return transformsEqual and materialsEqual;
+        }
     };
 }
