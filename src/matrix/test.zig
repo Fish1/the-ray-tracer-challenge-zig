@@ -108,9 +108,9 @@ test "multiply tuple" {
         8, 6, 4, 1,
         0, 0, 0, 1,
     });
-    const t1 = Tuple.init(1, 2, 3, 1);
+    const t1 = Tuple().init(1, 2, 3, 1);
     const result = m1.multiplyTuple(t1);
-    const expectedResult = Tuple.init(18, 24, 33, 1);
+    const expectedResult = Tuple().init(18, 24, 33, 1);
     try expect(result.equals(expectedResult));
 }
 

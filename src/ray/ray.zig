@@ -3,6 +3,7 @@ const log = @import("std").log;
 const mem = @import("std").mem;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
+const Tuples = @import("../tuples/tuples.zig").Tuples;
 const Matrix = @import("../matrix/matrix.zig").Matrix;
 const Object = @import("../object/object.zig").Object;
 
@@ -11,10 +12,10 @@ const Intersection = @import("../intersection/intersection.zig").Intersection;
 
 pub fn Ray() type {
     return struct {
-        origin: Tuple,
-        direction: Tuple,
+        origin: Tuple(),
+        direction: Tuple(),
 
-        pub fn init(origin: Tuple, direction: Tuple) @This() {
+        pub fn init(origin: Tuple(), direction: Tuple()) @This() {
             const self: @This() = .{
                 .origin = origin,
                 .direction = direction,
@@ -23,7 +24,7 @@ pub fn Ray() type {
             return self;
         }
 
-        pub fn position(self: @This(), time: f64) Tuple {
+        pub fn position(self: @This(), time: f64) Tuple() {
             return self.origin.add(
                 self.direction.multiplyScaler(time),
             );
@@ -32,10 +33,10 @@ pub fn Ray() type {
         pub fn intersect(self: @This(), object: *const Object()) IntersectionList() {
             const tempRay = self.transform(object.transform.inverse());
 
-            const shapeToRay = Tuple.subtract(tempRay.origin, Tuple.Point(0, 0, 0));
-            const a = Tuple.dot(tempRay.direction, tempRay.direction);
-            const b = Tuple.dot(tempRay.direction, shapeToRay) * 2;
-            const c = Tuple.dot(shapeToRay, shapeToRay) - 1.0;
+            const shapeToRay = Tuple().subtract(tempRay.origin, Tuples.Point(0, 0, 0));
+            const a = Tuple().dot(tempRay.direction, tempRay.direction);
+            const b = Tuple().dot(tempRay.direction, shapeToRay) * 2;
+            const c = Tuple().dot(shapeToRay, shapeToRay) - 1.0;
 
             const discriminant = (b * b) - 4 * a * c;
             if (discriminant < 0) {

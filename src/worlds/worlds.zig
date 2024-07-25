@@ -4,7 +4,7 @@ const Color = @import("../color/color.zig").Color;
 const Light = @import("../light/light.zig").Light;
 const Transforms = @import("../transforms/transforms.zig").Transforms;
 const Objects = @import("../objects/objects.zig").Objects;
-const Tuple = @import("../tuple/tuple.zig").Tuple;
+const Tuples = @import("../tuples/tuples.zig").Tuples;
 
 pub const Worlds = struct {
     pub fn DefaultWorld() World() {
@@ -17,7 +17,7 @@ pub const Worlds = struct {
         sphere.material = material;
         sphere.transform = Transforms.Scale(0.5, 0.5, 0.5);
         world.addObject(sphere);
-        const light = Light().Point(Tuple.Point(-10, 10, -10), Color.init(1, 1, 1));
+        const light = Light().Point(Tuples.Point(-10, 10, -10), Color.init(1, 1, 1));
         world.addLight(light);
         return world;
     }

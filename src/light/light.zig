@@ -10,10 +10,10 @@ const Material = @import("../material/material.zig").Material;
 pub fn Light() type {
     return struct {
         transform: Matrix(4, 4),
-        position: Tuple,
+        position: Tuple(),
         intensity: Color,
 
-        pub fn Point(position: Tuple, intensity: Color) @This() {
+        pub fn Point(position: Tuple(), intensity: Color) @This() {
             return .{
                 .transform = Transforms.Identity(),
                 .position = position,
@@ -28,7 +28,7 @@ pub fn Light() type {
             return transformsEqual and positionsEqual and intensityEqual;
         }
 
-        pub fn lighting(self: @This(), material: Material(), surfacePoint: Tuple, toEye: Tuple, surfaceNormal: Tuple) Color {
+        pub fn lighting(self: @This(), material: Material(), surfacePoint: Tuple(), toEye: Tuple(), surfaceNormal: Tuple()) Color {
             const effectiveColor = material.color.multiply(self.intensity);
             const lightVector = self.position.subtract(surfacePoint).normalize();
             const ambient = effectiveColor.multiplyScaler(material.ambient);

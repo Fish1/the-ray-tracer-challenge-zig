@@ -117,7 +117,7 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
             return Matrix(other.cols, self.rows);
         }
 
-        pub fn multiplyTuple(self: @This(), other: Tuple) Tuple {
+        pub fn multiplyTuple(self: @This(), other: Tuple()) Tuple() {
             comptime expect(self.cols == 4) catch @compileError("matrix must have 4 columns");
             var r = [4]f64{ 0, 0, 0, 0 };
             for (0..self.rows) |row| {
@@ -131,7 +131,7 @@ pub fn Matrix(comptime _rows: usize, comptime _cols: usize) type {
                     (c * other.getZ()) +
                     (d * other.getW());
             }
-            return Tuple.init(r[0], r[1], r[2], r[3]);
+            return Tuple().init(r[0], r[1], r[2], r[3]);
         }
 
         pub fn transpose(self: @This()) @This() {

@@ -2,10 +2,10 @@ const Tuple = @import("../tuple/tuple.zig").Tuple;
 const print = @import("std").debug.print;
 
 pub const Color = struct {
-    tuple: Tuple,
+    tuple: Tuple(),
 
     pub fn init(r: f64, g: f64, b: f64) Color {
-        return Color{ .tuple = Tuple.init(r, g, b, 1) };
+        return Color{ .tuple = Tuple().init(r, g, b, 1) };
     }
 
     pub fn red(self: Color) f64 {

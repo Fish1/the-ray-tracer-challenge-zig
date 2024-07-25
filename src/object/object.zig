@@ -1,6 +1,7 @@
 const Matrix = @import("../matrix/matrix.zig").Matrix;
 const Transforms = @import("../transforms/transforms.zig").Transforms;
 const Tuple = @import("../tuple/tuple.zig").Tuple;
+const Tuples = @import("../tuples/tuples.zig").Tuples;
 const Material = @import("../material/material.zig").Material;
 
 pub fn Object() type {
@@ -22,8 +23,8 @@ pub fn Object() type {
         //};
         //}
 
-        pub fn normalAt(self: @This(), worldSpacePoint: Tuple) Tuple {
-            const objectOrigin = Tuple.Point(0, 0, 0);
+        pub fn normalAt(self: @This(), worldSpacePoint: Tuple()) Tuple() {
+            const objectOrigin = Tuples.Point(0, 0, 0);
             const objectSpacePoint = self.transform.inverse().multiplyTuple(worldSpacePoint);
             const objectSpaceNormal = objectSpacePoint.subtract(objectOrigin);
             var worldSpaceNormal = self.transform.inverse().transpose().multiplyTuple(objectSpaceNormal);

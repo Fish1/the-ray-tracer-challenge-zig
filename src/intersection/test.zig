@@ -2,7 +2,6 @@ const expect = @import("std").testing.expect;
 const print = @import("std").debug.print;
 
 const Objects = @import("../objects/objects.zig").Objects;
-const Tuple = @import("../tuple/tuple.zig").Tuple;
 
 const Intersection = @import("intersection.zig").Intersection;
 const IntersectionList = @import("intersection_list.zig").IntersectionList;

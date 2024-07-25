@@ -1,7 +1,7 @@
 const expect = @import("std").testing.expect;
 
 const Light = @import("../light/light.zig").Light;
-const Tuple = @import("../tuple/tuple.zig").Tuple;
+const Tuples = @import("../tuples/tuples.zig").Tuples;
 const Color = @import("../color/color.zig").Color;
 const Material = @import("../material/material.zig").Material;
 const Transforms = @import("../transforms/transforms.zig").Transforms;
@@ -18,7 +18,7 @@ test "empty world" {
 
 test "default world" {
     const world = Worlds.DefaultWorld();
-    const light = Light().Point(Tuple.Point(-10, 10, -10), Color.init(1, 1, 1));
+    const light = Light().Point(Tuples.Point(-10, 10, -10), Color.init(1, 1, 1));
     var sphere = Objects.Sphere();
     var material = Material().init();
     material.color = Color.init(0.8, 1.0, 0.6);
