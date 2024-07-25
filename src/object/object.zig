@@ -1,5 +1,5 @@
 const Matrix = @import("../matrix/matrix.zig").Matrix;
-const Transform = @import("../transform/transform.zig").Transform;
+const Transforms = @import("../transforms/transforms.zig").Transforms;
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 const Material = @import("../material/material.zig").Material;
 
@@ -8,12 +8,19 @@ pub fn Object() type {
         transform: Matrix(4, 4),
         material: Material(),
 
-        pub fn Sphere() @This() {
+        pub fn init() @This() {
             return .{
-                .transform = Transform.Identity(),
+                .transform = Transforms.Identity(),
                 .material = Material().init(),
             };
         }
+
+        //pub fn Sphere() @This() {
+        //   return .{
+        //      .transform = Transforms.Identity(),
+        //     .material = Material().init(),
+        //};
+        //}
 
         pub fn normalAt(self: @This(), worldSpacePoint: Tuple) Tuple {
             const objectOrigin = Tuple.Point(0, 0, 0);

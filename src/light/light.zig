@@ -1,7 +1,7 @@
 const pow = @import("std").math.pow;
 
 const Matrix = @import("../matrix/matrix.zig").Matrix;
-const Transform = @import("../transform/transform.zig").Transform;
+const Transforms = @import("../transforms/transforms.zig").Transforms;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 const Color = @import("../color/color.zig").Color;
@@ -15,7 +15,7 @@ pub fn Light() type {
 
         pub fn Point(position: Tuple, intensity: Color) @This() {
             return .{
-                .transform = Transform.Identity(),
+                .transform = Transforms.Identity(),
                 .position = position,
                 .intensity = intensity,
             };

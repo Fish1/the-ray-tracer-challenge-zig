@@ -1,14 +1,14 @@
 const expect = @import("std").testing.expect;
 const print = @import("std").debug.print;
 
-const Object = @import("../object/object.zig").Object;
+const Objects = @import("../objects/objects.zig").Objects;
 const Tuple = @import("../tuple/tuple.zig").Tuple;
 
 const Intersection = @import("intersection.zig").Intersection;
 const IntersectionList = @import("intersection_list.zig").IntersectionList;
 
 test "intersection 1" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
 
     const intersection = Intersection().init(3.5, &shape);
     try expect(intersection.time == 3.5);
@@ -16,7 +16,7 @@ test "intersection 1" {
 }
 
 test "intersections aggregate" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
 
     const intersection1 = Intersection().init(1, &shape);
     const intersection2 = Intersection().init(2, &shape);
@@ -31,7 +31,7 @@ test "intersections aggregate" {
 }
 
 test "hit 1" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
     const intersection1 = Intersection().init(1, &shape);
     const intersection2 = Intersection().init(2, &shape);
 
@@ -46,7 +46,7 @@ test "hit 1" {
 }
 
 test "hit 2" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
     const intersection1 = Intersection().init(-1, &shape);
     const intersection2 = Intersection().init(1, &shape);
 
@@ -61,7 +61,7 @@ test "hit 2" {
 }
 
 test "hit 3" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
     const intersection1 = Intersection().init(-2, &shape);
     const intersection2 = Intersection().init(-1, &shape);
 
@@ -76,7 +76,7 @@ test "hit 3" {
 }
 
 test "hit 4" {
-    const shape = Object().Sphere();
+    const shape = Objects.Sphere();
     const intersection1 = Intersection().init(5, &shape);
     const intersection2 = Intersection().init(7, &shape);
     const intersection3 = Intersection().init(-3, &shape);

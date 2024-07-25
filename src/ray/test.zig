@@ -5,9 +5,10 @@ const mem = @import("std").mem;
 const debug = @import("std").debug;
 
 const Tuple = @import("../tuple/tuple.zig").Tuple;
-const Transform = @import("../transform/transform.zig").Transform;
+const Transforms = @import("../transforms/transforms.zig").Transforms;
 const Ray = @import("ray.zig").Ray;
 const Object = @import("../object/object.zig").Object;
+const Objects = @import("../objects/objects.zig").Objects;
 
 test "create a ray" {
     const origin = Tuple.Point(1, 2, 3);
@@ -41,7 +42,7 @@ test "intersect 1" {
     const direction = Tuple.Vector(0, 0, 1);
 
     const ray = Ray().init(origin, direction);
-    const sphere = Object().Sphere();
+    const sphere = Objects.Sphere();
 
     const result = ray.intersect(&sphere);
 
@@ -55,7 +56,7 @@ test "intersect 2" {
     const direction = Tuple.Vector(0, 0, 1);
 
     const ray = Ray().init(origin, direction);
-    const sphere = Object().Sphere();
+    const sphere = Objects.Sphere();
 
     const result = ray.intersect(&sphere);
 
@@ -69,7 +70,7 @@ test "intersect 3" {
     const direction = Tuple.Vector(0, 0, 1);
 
     const ray = Ray().init(origin, direction);
-    const sphere = Object().Sphere();
+    const sphere = Objects.Sphere();
 
     const result = ray.intersect(&sphere);
     try expect(result.length() == 0);
@@ -80,7 +81,7 @@ test "intersect 4" {
     const direction = Tuple.Vector(0, 0, 1);
 
     const ray = Ray().init(origin, direction);
-    const sphere = Object().Sphere();
+    const sphere = Objects.Sphere();
 
     const result = ray.intersect(&sphere);
     try expect(result.length() == 2);
@@ -93,7 +94,7 @@ test "intersect 5" {
     const direction = Tuple.Vector(0, 0, 1);
 
     const ray = Ray().init(origin, direction);
-    const sphere = Object().Sphere();
+    const sphere = Objects.Sphere();
 
     const result = ray.intersect(&sphere);
 
@@ -107,7 +108,7 @@ test "translate ray" {
     const direction = Tuple.Vector(0, 1, 0);
     const ray = Ray().init(origin, direction);
 
-    const transform = Transform.Translate(3, 4, 5);
+    const transform = Transforms.Translate(3, 4, 5);
     const result = ray.transform(transform);
 
     try expect(result.origin.equals(Tuple.Point(4, 6, 8)));
@@ -119,7 +120,7 @@ test "scale ray" {
     const direction = Tuple.Vector(0, 1, 0);
     const ray = Ray().init(origin, direction);
 
-    const transform = Transform.Scale(2, 3, 4);
+    const transform = Transforms.Scale(2, 3, 4);
     const result = ray.transform(transform);
 
     try expect(result.origin.equals(Tuple.Point(2, 6, 12)));
@@ -131,8 +132,8 @@ test "intersects scaled sphere" {
     const direction = Tuple.Vector(0, 0, 1);
     const ray = Ray().init(origin, direction);
 
-    var sphere = Object().Sphere();
-    sphere.transform = Transform.Scale(2, 2, 2);
+    var sphere = Objects.Sphere();
+    sphere.transform = Transforms.Scale(2, 2, 2);
 
     const result = ray.intersect(&sphere);
 
@@ -146,8 +147,8 @@ test "intersects translated sphere" {
     const direction = Tuple.Vector(0, 0, 1);
     const ray = Ray().init(origin, direction);
 
-    var sphere = Object().Sphere();
-    sphere.transform = Transform.Translate(5, 0, 0);
+    var sphere = Objects.Sphere();
+    sphere.transform = Transforms.Translate(5, 0, 0);
 
     const result = ray.intersect(&sphere);
 

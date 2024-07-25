@@ -2,7 +2,7 @@ const math = @import("std").math;
 
 const Matrix = @import("../matrix/matrix.zig").Matrix;
 
-pub const Transform = struct {
+pub const Transforms = struct {
     pub fn Translate(x: f64, y: f64, z: f64) Matrix(4, 4) {
         return Matrix(4, 4).init(&[_]f64{
             1, 0, 0, x,
