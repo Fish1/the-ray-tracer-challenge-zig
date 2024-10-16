@@ -4,11 +4,11 @@ const Color = @import("../color/color.zig").Color;
 pub const Canvas = struct {
     width: usize,
     height: usize,
-    buffer: []Color,
+    buffer: []Color(),
 
-    pub fn init(comptime width: usize, comptime height: usize, buffer: []Color) Canvas {
+    pub fn init(comptime width: usize, comptime height: usize, buffer: []Color()) Canvas {
         for (buffer) |*pixel| {
-            pixel.* = Color.init(0, 0, 0);
+            pixel.* = Color().init(0, 0, 0);
         }
 
         return Canvas{
@@ -18,15 +18,15 @@ pub const Canvas = struct {
         };
     }
 
-    pub fn get(self: Canvas, x: usize, y: usize) Color {
+    pub fn get(self: Canvas, x: usize, y: usize) Color() {
         return self.buffer[y * self.width + x];
     }
 
-    pub fn set(self: Canvas, x: usize, y: usize, color: Color) void {
+    pub fn set(self: Canvas, x: usize, y: usize, color: Color()) void {
         self.buffer[y * self.width + x] = color;
     }
 
-    pub fn safeSet(self: Canvas, x: usize, y: usize, color: Color) void {
+    pub fn safeSet(self: Canvas, x: usize, y: usize, color: Color()) void {
         if (x >= 0 and x < self.width and y >= 0 and y < self.height) {
             self.buffer[y * self.width + x] = color;
         }

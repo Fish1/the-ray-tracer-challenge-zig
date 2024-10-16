@@ -18,10 +18,10 @@ test "empty world" {
 
 test "default world" {
     const world = Worlds.DefaultWorld();
-    const light = Light().Point(Tuples.Point(-10, 10, -10), Color.init(1, 1, 1));
+    const light = Light().Point(Tuples.Point(-10, 10, -10), Color().init(1, 1, 1));
     var sphere = Objects.Sphere();
     var material = Material().init();
-    material.color = Color.init(0.8, 1.0, 0.6);
+    material.color = Color().init(0.8, 1.0, 0.6);
     material.diffuse = 0.7;
     material.specular = 0.2;
     sphere.material = material;

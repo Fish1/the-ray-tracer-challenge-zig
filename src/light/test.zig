@@ -9,7 +9,7 @@ const Material = @import("../material/material.zig").Material;
 
 test "create light" {
     const position = Tuples.Point(0, 0, 0);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
     try expect(light.position.equals(position));
     try expect(light.intensity.equals(intensity));
@@ -20,14 +20,14 @@ test "direct light" {
     const surfacePosition = Tuples.Point(0, 0, 0);
 
     const position = Tuples.Point(0, 0, -10);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
 
     const toEye = Tuples.Vector(0, 0, -1);
     const surfaceNormal = Tuples.Vector(0, 0, -1);
 
     const result = light.lighting(surfaceMaterial, surfacePosition, toEye, surfaceNormal);
-    try expect(result.equals(Color.init(1.9, 1.9, 1.9)));
+    try expect(result.equals(Color().init(1.9, 1.9, 1.9)));
 }
 
 test "45 degree eye" {
@@ -35,14 +35,14 @@ test "45 degree eye" {
     const surfacePosition = Tuples.Point(0, 0, 0);
 
     const position = Tuples.Point(0, 0, -10);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
 
     const toEye = Tuples.Vector(0, sqrt(2.0) / 2.0, sqrt(2.0) / 2.0);
     const surfaceNormal = Tuples.Vector(0, 0, -1);
 
     const result = light.lighting(surfaceMaterial, surfacePosition, toEye, surfaceNormal);
-    try expect(result.equals(Color.init(1, 1, 1)));
+    try expect(result.equals(Color().init(1, 1, 1)));
 }
 
 test "45 degree light" {
@@ -50,14 +50,14 @@ test "45 degree light" {
     const surfacePosition = Tuples.Point(0, 0, 0);
 
     const position = Tuples.Point(0, 10, -10);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
 
     const toEye = Tuples.Vector(0, 0, -1);
     const surfaceNormal = Tuples.Vector(0, 0, -1);
 
     const result = light.lighting(surfaceMaterial, surfacePosition, toEye, surfaceNormal);
-    try expect(result.equals(Color.init(0.7364, 0.7364, 0.7364)));
+    try expect(result.equals(Color().init(0.7364, 0.7364, 0.7364)));
 }
 
 test "45 degree light & eye" {
@@ -65,14 +65,14 @@ test "45 degree light & eye" {
     const surfacePosition = Tuples.Point(0, 0, 0);
 
     const position = Tuples.Point(0, 10, -10);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
 
     const toEye = Tuples.Vector(0, -sqrt(2.0) / 2.0, -sqrt(2.0) / 2.0);
     const surfaceNormal = Tuples.Vector(0, 0, -1);
 
     const result = light.lighting(surfaceMaterial, surfacePosition, toEye, surfaceNormal);
-    try expect(result.equals(Color.init(1.6364, 1.6364, 1.6364)));
+    try expect(result.equals(Color().init(1.6364, 1.6364, 1.6364)));
 }
 
 test "behind surface light" {
@@ -80,12 +80,12 @@ test "behind surface light" {
     const surfacePosition = Tuples.Point(0, 0, 0);
 
     const position = Tuples.Point(0, 0, 10);
-    const intensity = Color.init(1, 1, 1);
+    const intensity = Color().init(1, 1, 1);
     const light = Light().Point(position, intensity);
 
     const toEye = Tuples.Vector(0, 0, -1);
     const surfaceNormal = Tuples.Vector(0, 0, -1);
 
     const result = light.lighting(surfaceMaterial, surfacePosition, toEye, surfaceNormal);
-    try expect(result.equals(Color.init(0.1, 0.1, 0.1)));
+    try expect(result.equals(Color().init(0.1, 0.1, 0.1)));
 }

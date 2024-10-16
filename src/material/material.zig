@@ -2,7 +2,7 @@ const Color = @import("../color/color.zig").Color;
 
 pub fn Material() type {
     return struct {
-        color: Color,
+        color: Color(),
         ambient: f64,
         diffuse: f64,
         specular: f64,
@@ -10,7 +10,7 @@ pub fn Material() type {
 
         pub fn init() @This() {
             return .{
-                .color = Color.init(1, 1, 1),
+                .color = Color().init(1, 1, 1),
                 .ambient = 0.1,
                 .diffuse = 0.9,
                 .specular = 0.9,

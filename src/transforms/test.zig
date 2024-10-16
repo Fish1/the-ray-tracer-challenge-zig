@@ -187,7 +187,7 @@ test "transformations in seqence (chained)" {
 }
 
 test "create clock" {
-    var buffer: [300 * 300]Color = undefined;
+    var buffer: [300 * 300]Color() = undefined;
     const canvas = Canvas.init(300, 300, &buffer);
 
     const position = Transforms.Translate(150, 150, 0);
@@ -201,7 +201,7 @@ test "create clock" {
         const p2 = point.multiplyMatrix(position);
         const x = @as(usize, @intFromFloat(p2.getX()));
         const y = @as(usize, @intFromFloat(p2.getY()));
-        canvas.safeSet(x, y, Color.init(1.5, 0, 0));
+        canvas.safeSet(x, y, Color().init(1.5, 0, 0));
     }
     try canvas.render("./output/clock.ppm");
 }
